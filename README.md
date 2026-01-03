@@ -61,3 +61,21 @@ The pipeline preserves this limitation by design.
 - Immutable snapshot per run  
 - Row, column, and timing logs  
 
+data/bronze/run_date=YYYY-MM-DD/
+├── data.jsonl        # Raw records ingested from the API (JSON Lines)
+└── manifest.json    # Run metadata: row counts, schema, timestamps
+
+---
+
+### Silver Layer — Typed canonical data
+
+- Streaming read from Bronze  
+- Explicit column selection (schema contract)  
+- Stable typing to prevent schema drift  
+- Single large Parquet output  
+
+### Gold Analytics — Derived datasets
+
+- Aggregated, consumable CSV outputs  
+- Designed for Excel / Power BI  
+- Deterministic derivations from Gold  
