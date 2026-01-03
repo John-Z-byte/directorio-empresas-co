@@ -1,150 +1,63 @@
-Contexto del Proyecto — Directorio de Empresas (Colombia)
+# Directorio de Empresas Colombia (RUES)
 
-Estoy desarrollando un proyecto de Data Engineering basado en datos públicos del Registro Único Empresarial y Social (RUES) publicados en datos.gov.co (CONFECÁMARAS).
+## A reproducible, file-based data engineering pipeline built on public RUES data
 
-Objetivo general
+This project implements a **deterministic, versioned, file-based data pipeline** using public data from the **Registro Único Empresarial y Social (RUES)**, published on datos.gov.co by CONFECÁMARAS.
 
-Construir un pipeline de datos reproducible y versionado que:
+It is designed to demonstrate **sound data engineering practices**: explicit schemas, immutable runs, clear logging, and analytical readiness—without scraping, guessing, or hidden enrichment.
 
-Ingesta datos masivos (millones de registros) desde una API pública (Socrata / SODA2)
+---
 
-Estructure los datos en capas Bronze → Silver → Gold
+## Problem Statement
 
-Produzca datasets analíticos listos para consumo (Parquet)
+### Reliability issues in large public open-data pipelines
 
-Sirva como proyecto de portfolio profesional de Data Engineering
+Public datasets at national scale often introduce challenges such as:
 
-El foco es ingeniería de datos, no web scraping ni directorios comerciales.
+- Massive row counts with API pagination limits  
+- Schema ambiguity and silent drift  
+- Reprocessing without version control  
+- Ad-hoc transformations that break reproducibility  
 
-Fuente de datos
+This project treats **data as an auditable artifact**, enforcing contracts and layered transformations to ensure consistency over time.
 
-Dataset: Personas Naturales, Personas Jurídicas y Entidades Sin Ánimo de Lucro
+---
 
-Plataforma: datos.gov.co
+## Project Objective
 
-Tecnología de acceso: Socrata Open Data API (SODA2)
+### Build a production-style analytical pipeline that:
 
-Volumen: ~9 millones de filas, ~36 columnas
+- Ingests **millions of records** from a public API (Socrata / SODA2)  
+- Separates data into **Bronze → Silver → Gold** layers  
+- Produces **analysis-ready datasets** without aggregation side effects  
+- Enforces **explicit schema control and logging**  
+- Serves as a **professional Data Engineering portfolio project**
 
-Campos clave disponibles:
+This project **does not** scrape websites or invent missing data.  
+All outputs strictly respect the original data contract.
 
-Identificación (NIT / número identificación)
+---
 
-Razón social
+## Data Source
 
-Estado de matrícula (ACTIVA, CANCELADA, etc.)
+- **Platform:** datos.gov.co  
+- **Provider:** CONFECÁMARAS  
+- **Technology:** Socrata Open Data API (SODA2)  
+- **Volume:** ~9 million records  
+- **Observed columns:** 36  
+- **Canonical model:** 21 columns  
 
-Fechas (matrícula, renovación, cancelación, actualización)
+⚠️ The dataset does **not** include municipality, address, phone, or email.  
+The pipeline preserves this limitation by design.
 
-Tipo de sociedad / organización jurídica
+---
 
-CIIU
+## Data Architecture
 
-Representante legal
+### Bronze Layer — Raw ingestion
 
-⚠️ El dataset NO contiene municipio, dirección, teléfono ni email.
-El proyecto no intenta forzar esos datos.
+- Paginated API ingestion  
+- JSONL persistence  
+- Immutable snapshot per run  
+- Row, column, and timing logs  
 
-Arquitectura implementada
-Bronze
-
-Ingesta paginada desde la API
-
-Persistencia como JSONL
-
-Snapshots versionados por fecha de corrida
-
-Datos crudos, inmutables
-
-Silver
-
-Conversión a Parquet
-
-Normalización de strings
-
-Tipado de fechas
-
-Selección explícita de columnas
-
-Modelo base analítico
-
-Gold
-
-Datos estructurados, sin agregaciones
-
-Tabla canónica lista para BI / análisis
-
-Una versión por corrida (sin acumulación)
-
-Stack técnico
-
-Python 3.14
-
-requests
-
-pandas
-
-pyarrow
-
-YAML
-
-Parquet
-
-PowerShell (Windows)
-
-Arquitectura file-based (sin base de datos)
-
-Estructura del proyecto
-directorio-empresas-co/
-├── src/
-│   └── directorio/
-│       ├── ingest_soda.py      # Ingesta API (Bronze)
-│       ├── transform.py        # Bronze → Silver
-│       ├── publish.py          # Silver → Gold
-│       └── config.py           # Contrato de columnas
-├── data/
-│   ├── bronze/
-│   ├── silver/
-│   └── gold/
-├── configs/
-│   └── targets.yml
-├── requirements.txt
-└── README.md
-
-Estado actual
-
-Ingesta confirmada (Bronze con datos reales)
-
-Silver en Parquet creado correctamente
-
-Gold generado como tabla estructurada
-
-README documentado
-
-Proyecto listo para extenderse
-
-Próximo foco (a definir en la nueva conversación)
-
-Cargas incrementales
-
-Comparación entre runs
-
-Métricas de churn
-
-Tests de calidad
-
-Orquestación
-
-Analítica temporal avanzada
-
-Intención
-
-Este proyecto está pensado para:
-
-Demostrar criterio de diseño
-
-Mostrar buenas prácticas reales
-
-Ser entendible por ingenieros senior y recruiters
-
-Escalar sin rehacer arquitectura
